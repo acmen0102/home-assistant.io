@@ -17,11 +17,7 @@ works_with:
 ha_quality_scale: bronze
 ---
 
-The **LinknLink** {% term integration %} connects eMotion Ultra and Ultra2
-presence sensors directly to Home Assistant over the local network. Device
-discovery, authentication, state updates, and control use the LinknLink DNA and
-eMotion UDP protocols. The integration does not require a cloud service,
-DeviceHub, MQTT, or the `linknlink-device-bridge` service.
+The **LinknLink** {% term integration %} connects eMotion Ultra and Ultra2 presence sensors directly to Home Assistant over the local network. Authentication and state updates use the LinknLink DNA and eMotion UDP protocols. Communication remains local between Home Assistant and the device.
 
 ## Supported devices
 
@@ -34,10 +30,8 @@ Before setting up the integration:
 
 1. Complete Wi-Fi setup for the device using the LinknLink app.
 2. Connect Home Assistant and the device to the same local network.
-3. Find the device IP address and MAC address in your router or on the device
-   label.
-4. Ensure that UDP traffic from Home Assistant to the device is allowed. The
-   default device port is `80`.
+3. Find the device IP address and MAC address in your router or on the device label.
+4. Ensure that UDP traffic from Home Assistant to the device is allowed. The default device port is `80`.
 
 {% include integrations/config_flow.md %}
 
@@ -52,8 +46,7 @@ Port:
 
 ## Supported functionality
 
-The available entities depend on the sensors and child devices reported by the
-eMotion Ultra.
+The available entities depend on the sensors and child devices reported by the eMotion Ultra.
 
 ### Sensors
 
@@ -71,10 +64,7 @@ The integration can provide the following sensor entities:
 
 ## Data updates
 
-This integration uses local {% term polling %}. Home Assistant requests updated
-device and child-device state every 30 seconds. A temporary communication error
-makes the entities unavailable; polling resumes automatically and the local
-session is re-established when the device becomes reachable again.
+This integration uses local {% term polling %}. Home Assistant requests updated device and child-device state every 30 seconds. A temporary communication error makes the entities unavailable; polling resumes automatically and the local session is re-established when the device becomes reachable again.
 
 ## Actions
 
@@ -82,14 +72,11 @@ This integration does not provide custom actions.
 
 ## Known limitations
 
-- The integration does not configure Wi-Fi. Initial BLE provisioning must be
-  completed with the LinknLink app.
+- The integration does not configure Wi-Fi. Initial BLE provisioning must be completed with the LinknLink app.
 - Automatic network discovery is not provided in the initial release.
-- The initial release exposes sensor entities only. Motion and presence binary
-  sensors and child-device controls are not yet exposed.
+- The initial release exposes sensor entities only. Motion and presence binary sensors and child-device controls are not yet exposed.
 - The initial release uses polling and does not enable local UDP position push.
-- Changing the device IP address requires removing and adding the integration
-  again. Assigning a stable DHCP lease is recommended.
+- Changing the device IP address requires removing and adding the integration again. Assigning a stable DHCP lease is recommended.
 
 ## Troubleshooting
 
@@ -97,20 +84,15 @@ This integration does not provide custom actions.
 
 1. Confirm that the device is powered on and connected to Wi-Fi.
 2. Confirm that the entered IP and MAC addresses belong to the same device.
-3. Check that Home Assistant can reach the device network without client
-   isolation or a firewall blocking UDP port 80.
-4. Stop other local software controlling the device temporarily, then retry
-   setup.
+3. Check that Home Assistant can reach the device network without client isolation or a firewall blocking UDP port 80.
+4. Stop other local software controlling the device temporarily, then retry setup.
 
 ### Entities are unavailable
 
-Confirm that the device still uses the configured IP address. Restart the
-device and verify that UDP traffic between Home Assistant and the device is not
-blocked.
+Confirm that the device still uses the configured IP address. Restart the device and verify that UDP traffic between Home Assistant and the device is not blocked.
 
 ## Removing the integration
 
-This integration follows standard integration removal. No data needs to be
-removed from the device.
+This integration follows standard integration removal. No data needs to be removed from the device.
 
 {% include integrations/remove_device_service.md %}
