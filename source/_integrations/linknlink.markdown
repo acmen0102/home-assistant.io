@@ -2,6 +2,7 @@
 title: LinknLink
 description: Instructions on how to integrate LinknLink eMotion Ultra devices with Home Assistant.
 ha_category:
+  - Binary sensor
   - Sensor
 ha_config_flow: true
 ha_release: 2026.8
@@ -10,6 +11,7 @@ ha_codeowners:
   - '@acmen0102'
 ha_domain: linknlink
 ha_platforms:
+  - binary_sensor
   - sensor
 ha_integration_type: device
 works_with:
@@ -17,7 +19,7 @@ works_with:
 ha_quality_scale: bronze
 ---
 
-The **LinknLink** {% term integration %} connects eMotion Ultra and Ultra2 presence sensors directly to Home Assistant over the local network. Authentication and state updates use the LinknLink DNA and eMotion UDP protocols. Communication remains local between Home Assistant and the device.
+The **LinknLink** {% term integration %} connects eMotion Ultra and Ultra2 presence sensors directly to Home Assistant over the local network. The integration uses the LinknLink DNA protocol for device identification and legacy Ultra communication. Ultra2 sensor states are read from the device's standard ESPHome local API. Communication remains local between Home Assistant and the device.
 
 ## Supported devices
 
@@ -28,20 +30,17 @@ The **LinknLink** {% term integration %} connects eMotion Ultra and Ultra2 prese
 
 Before setting up the integration:
 
-1. Complete Wi-Fi setup for the device using the LinknLink app.
+1. Complete Wi-Fi setup using a supported provisioning method for the device.
 2. Connect Home Assistant and the device to the same local network.
-3. Find the device IP address and MAC address in your router or on the device label.
-4. Ensure that UDP traffic from Home Assistant to the device is allowed. The default device port is `80`.
+3. Find the device IP address in your router.
+4. Ensure that UDP traffic from Home Assistant to port `80` on the device is allowed.
+5. For Ultra2, ensure that TCP traffic from Home Assistant to port `6053` on the device is allowed.
 
 {% include integrations/config_flow.md %}
 
 {% configuration_basic %}
 Host:
   description: "The IP address or hostname of the eMotion Ultra device."
-MAC address:
-  description: "The MAC address printed on the device or shown by your router."
-Port:
-  description: "The DNA UDP port used by the device. The default is 80."
 {% endconfiguration_basic %}
 
 ## Supported functionality
@@ -55,12 +54,16 @@ The integration can provide the following sensor entities:
 - Temperature
 - Humidity
 - Illuminance
-- Distance
-- Target distance
 - Target count
 - Persons in fenced zones
-- Detected position
+- Target count for zones 1 through 4
 - Wi-Fi signal strength
+
+The Wi-Fi signal strength entity is disabled by default.
+
+### Binary sensors
+
+The integration provides occupancy binary sensors for the complete detection area and zones 1 through 4 when those values are supported by the device.
 
 ## Data updates
 
@@ -72,24 +75,25 @@ This integration does not provide custom actions.
 
 ## Known limitations
 
-- The integration does not configure Wi-Fi. Initial BLE provisioning must be completed with the LinknLink app.
+- The integration does not configure Wi-Fi. Initial provisioning must be completed before adding the device to Home Assistant.
 - Automatic network discovery is not provided in the initial release.
-- The initial release exposes sensor entities only. Motion and presence binary sensors and child-device controls are not yet exposed.
 - The initial release uses polling and does not enable local UDP position push.
-- Changing the device IP address requires removing and adding the integration again. Assigning a stable DHCP lease is recommended.
+- Target coordinates, target distance, radar tuning, and device MQTT settings are not exposed.
+- The device network address can be changed from the integration's **Reconfigure** action. Assigning a stable DHCP lease is still recommended.
 
 ## Troubleshooting
 
 ### The device cannot be added
 
 1. Confirm that the device is powered on and connected to Wi-Fi.
-2. Confirm that the entered IP and MAC addresses belong to the same device.
-3. Check that Home Assistant can reach the device network without client isolation or a firewall blocking UDP port 80.
-4. Stop other local software controlling the device temporarily, then retry setup.
+2. Confirm that the entered IP address belongs to the eMotion Ultra device.
+3. Check that Home Assistant can reach the device network without client isolation or a firewall blocking UDP port `80`.
+4. For Ultra2, confirm that TCP port `6053` is reachable from Home Assistant.
+5. Stop other local software controlling the device temporarily, then retry setup.
 
 ### Entities are unavailable
 
-Confirm that the device still uses the configured IP address. Restart the device and verify that UDP traffic between Home Assistant and the device is not blocked.
+Confirm that the device still uses the configured IP address. Restart the device and verify that the required UDP and TCP traffic between Home Assistant and the device is not blocked.
 
 ## Removing the integration
 
